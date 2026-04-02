@@ -1,0 +1,125 @@
+/* ============================================================
+   variables.css — Zmienne CSS (kolory, rozmiary, cienie)
+   Edytuj tutaj aby zmienić wygląd całego dashboardu
+   ============================================================ */
+
+:root, [data-theme="light"] {
+  --bg-body:             #CBD5E1;
+  --bg-page:             #F1F5F9;
+  --bg-surface:          #FFFFFF;
+  --bg-surface-2:        #F8FAFC;
+  --bg-sidebar:          #FFFFFF;
+  --bg-topbar:           #FFFFFF;
+  --bg-popup:            #FFFFFF;
+
+  --color-accent:        #0073B8;
+  --color-accent-hover:  #005A94;
+  --color-accent-dim:    rgba(0,115,184,0.08);
+  --color-accent-border: rgba(0,115,184,0.22);
+
+  --color-mine:          #7C5A1A;
+  --color-mine-dim:      rgba(160,120,40,0.09);
+  --color-mine-border:   rgba(160,120,40,0.30);
+
+  --text-primary:        #1E293B;
+  --text-secondary:      #64748B;
+  --text-muted:          #6B7280;
+  --text-accent:         var(--color-accent);
+  --text-mine:           var(--color-mine);
+
+  --border-default:      #E2E8F0;
+  --border-sidebar:      #F1F5F9;
+  --border-accent:       var(--color-accent-border);
+  --border-mine:         var(--color-mine-border);
+
+  --spa-other-bg:        #F8FAFC;
+  --spa-other-border:    #E2E8F0;
+  --spa-other-text:      #6B7280;
+  --spa-mine-bg:         rgba(160,120,40,0.08);
+  --spa-mine-border:     rgba(160,120,40,0.32);
+  --spa-mine-text:       #7C5A1A;
+
+  --tool-bg:             #F8FAFC;
+  --tool-border:         #E2E8F0;
+  --tool-text:           #475569;
+  --tool-primary-bg:     rgba(160,120,40,0.07);
+  --tool-primary-border: rgba(160,120,40,0.28);
+  --tool-primary-text:   #7D5E1E;
+
+  --input-bg:            #F8FAFC;
+  --input-border:        #CBD5E1;
+
+  --tree-line:           #E2E8F0;
+  --tree-line-active:    var(--color-accent);
+
+  --shadow-app:          0 8px 48px rgba(0,0,0,0.14);
+  --shadow-card:         0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-popup:        0 8px 48px rgba(0,0,0,0.18);
+
+  --radius-sm:           8px;
+  --radius-md:           12px;
+  --radius-lg:           16px;
+  --radius-xl:           20px;
+
+  --ui-scale:            1;
+  --font-xs:             9px;
+  --font-sm:             11px;
+  --font-base:           12px;
+  --font-md:             13px;
+  --font-lg:             16px;
+  --font-xl:             18px;
+}
+
+[data-theme="dark"] {
+  --bg-body:             #030507;
+  --bg-page:             #0D1117;
+  --bg-surface:          #161B22;
+  --bg-surface-2:        #1C2230;
+  --bg-sidebar:          #111318;
+  --bg-topbar:           #111318;
+  --bg-popup:            #161B22;
+
+  --color-accent:        #4EA2DA;
+  --color-accent-hover:  #6DB8E8;
+  --color-accent-dim:    rgba(78,162,218,0.12);
+  --color-accent-border: rgba(78,162,218,0.25);
+
+  --color-mine:          #C9A84C;
+  --color-mine-dim:      rgba(201,168,76,0.12);
+  --color-mine-border:   rgba(201,168,76,0.35);
+
+  --text-primary:        #E8EDF2;
+  --text-secondary:      #8A95A3;
+  --text-muted:          #8B96A5;
+  --text-accent:         var(--color-accent);
+  --text-mine:           var(--color-mine);
+
+  --border-default:      rgba(255,255,255,0.07);
+  --border-sidebar:      rgba(255,255,255,0.06);
+  --border-accent:       var(--color-accent-border);
+  --border-mine:         var(--color-mine-border);
+
+  --spa-other-bg:        #1C2230;
+  --spa-other-border:    rgba(255,255,255,0.07);
+  --spa-other-text:      #8B96A5;
+  --spa-mine-bg:         rgba(201,168,76,0.1);
+  --spa-mine-border:     rgba(201,168,76,0.32);
+  --spa-mine-text:       #C9A84C;
+
+  --tool-bg:             #1C2230;
+  --tool-border:         rgba(255,255,255,0.07);
+  --tool-text:           #8A95A3;
+  --tool-primary-bg:     rgba(201,168,76,0.08);
+  --tool-primary-border: rgba(201,168,76,0.28);
+  --tool-primary-text:   #C9A84C;
+
+  --input-bg:            #0D1117;
+  --input-border:        rgba(78,162,218,0.2);
+
+  --tree-line:           rgba(255,255,255,0.1);
+  --tree-line-active:    var(--color-accent);
+
+  --shadow-app:          0 8px 48px rgba(0,0,0,0.6);
+  --shadow-card:         0 2px 8px rgba(0,0,0,0.3);
+  --shadow-popup:        0 8px 48px rgba(0,0,0,0.7);
+}

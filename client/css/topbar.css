@@ -1,0 +1,150 @@
+/* ============================================================
+   topbar.css — Górny pasek
+   ============================================================ */
+
+.topbar {
+  flex-shrink: 0;
+  background: var(--bg-sidebar);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-card);
+  transition: background 0.25s, border-color 0.25s;
+  z-index: 10;
+}
+
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+
+.user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--color-accent-dim);
+  border: 1.5px solid var(--color-accent-border);
+  color: var(--color-accent);
+  font-size: 11px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.25s, border-color 0.25s, color 0.25s;
+}
+
+.user-greeting {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: color 0.25s;
+}
+
+.user-meta {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 1px;
+  transition: color 0.25s;
+}
+
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+.theme-toggle {
+  display: flex;
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-default);
+  border-radius: 20px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.theme-btn {
+  width: 26px;
+  height: 22px;
+  border-radius: 14px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.theme-btn.active { background: var(--color-accent); color: #fff; }
+
+.icon-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-default);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.icon-btn:hover { background: var(--color-accent-dim); color: var(--color-accent); }
+
+.datetime-box { text-align: right; }
+
+.date-str {
+  font-size: 10px;
+  color: var(--text-muted);
+  transition: color 0.25s;
+}
+
+.time-str {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: 0.02em;
+  transition: color 0.25s;
+}
+
+/* ── Hamburger ── */
+.hamburger-btn {
+  display: none;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-default);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.hamburger-btn:hover { background: var(--color-accent-dim); color: var(--color-accent); }
+
+.hamburger-btn span {
+  display: block;
+  width: 14px;
+  height: 1.5px;
+  background: currentColor;
+  border-radius: 1px;
+  transition: all 0.2s;
+}
+
+/* ── Sidebar overlay na mobile ── */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 99;
+  backdrop-filter: blur(2px);
+}
+
+.sidebar-overlay.visible { display: block; }

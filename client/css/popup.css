@@ -1,0 +1,282 @@
+/* ============================================================
+   popup.css — Popup logowania, formularze
+   ============================================================ */
+
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-box {
+  background: var(--bg-popup);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  width: 420px;
+  max-width: 95vw;
+  box-shadow: var(--shadow-popup);
+  animation: popIn 0.22s ease both;
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ── Logo ── */
+.popup-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.popup-logo-img {
+  height: 64px;
+  width: auto;
+  display: block;
+  margin: 0 auto 8px;
+}
+
+[data-theme='dark'] .popup-logo-img {
+  filter: brightness(1.2);
+}
+
+/* Zachowane dla kompatybilności */
+.popup-logo-circle {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--color-mine);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  font-family: 'Syne', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-logo-text {
+  font-size: 11px;
+  color: var(--text-accent);
+  font-weight: 500;
+}
+
+/* ── Tytuł ── */
+.popup-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 3px;
+}
+
+.popup-subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 22px;
+  line-height: 1.5;
+}
+
+/* ── Formularz ── */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 7px;
+  letter-spacing: 0.04em;
+}
+
+.form-input {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  color: var(--text-primary);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  border-color: var(--color-accent);
+}
+
+/* ── Password toggle ── */
+.password-wrap {
+  position: relative;
+}
+
+.password-wrap .form-input {
+  padding-right: 40px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.password-toggle:hover {
+  color: var(--color-accent);
+}
+
+/* ── Błąd logowania ── */
+.login-error {
+  color: #dc2626;
+  font-size: 12px;
+  margin-bottom: 8px;
+  display: none;
+}
+
+.login-success {
+  color: #16a34a;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.popup-back {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  margin-top: 8px;
+  padding: 4px;
+  transition: color 0.15s;
+}
+
+.popup-back:hover {
+  color: var(--color-accent);
+}
+
+/* Mały link "zmień hasło" w stanie zalogowanym */
+.popup-change-link {
+  display: block;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  cursor: pointer;
+  margin-top: 12px;
+  transition: color 0.15s;
+}
+
+.popup-change-link:hover {
+  color: var(--color-accent);
+}
+
+/* ── Przyciski wyboru (BU, brygada) ── */
+.form-btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.sel-btn {
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  padding: 7px 14px;
+  color: var(--text-secondary);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.sel-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+.sel-btn.selected {
+  background: var(--color-accent-dim);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* ── Submit ── */
+.popup-submit {
+  width: 100%;
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: opacity 0.2s;
+}
+
+.popup-submit:hover:not(:disabled) {
+  opacity: 0.87;
+}
+.popup-submit:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+/* ── Zamknij (X) ── */
+.popup-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-default);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.popup-close.visible {
+  display: flex;
+}
+.popup-close:hover {
+  background: var(--color-accent-dim);
+  color: var(--color-accent);
+}
+
+.popup-box {
+  position: relative;
+}

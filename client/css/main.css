@@ -1,0 +1,13 @@
+/* ============================================================
+   main.css — Import wszystkich plików CSS
+   ============================================================ */
+
+@import './variables.css';
+@import './base.css';
+@import './sidebar.css';
+@import './topbar.css';
+@import './spa.css';
+@import './tools.css';
+@import './popup.css';
+@import './pages.css';
+@import './responsive.css';

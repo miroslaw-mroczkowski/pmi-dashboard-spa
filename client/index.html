@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="pl" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PMI Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link rel="stylesheet" href="css/main.css" />
+  </head>
+  <body>
+    <!-- POPUP LOGOWANIA -->
+    <div id="popup-overlay" class="popup-overlay" style="display: none">
+      <div class="popup-box">
+        <button class="popup-close" id="popup-close" type="button">
+          <i data-lucide="x" style="width: 14px; height: 14px"></i>
+        </button>
+        <div class="popup-logo">
+          <img src="assets/logo.png" alt="PMI Logo" class="popup-logo-img" />
+        </div>
+
+        <!-- Stan 1: zalogowany -->
+        <div id="popup-logged-in" style="display: none">
+          <h2 class="popup-title">Witaj, <span id="popup-username"></span></h2>
+          <p class="popup-subtitle">Jesteś zalogowany.</p>
+          <button class="popup-submit popup-logout" id="popup-logout">Wyloguj się</button>
+          <span class="popup-change-link" id="popup-change-link">zmień hasło</span>
+        </div>
+
+        <!-- Stan 3: zmiana hasła -->
+        <div id="popup-change-password" style="display: none">
+          <h2 class="popup-title">Zmień hasło</h2>
+          <p class="popup-subtitle">Wpisz stare i nowe hasło.</p>
+          <div class="form-group">
+            <label class="form-label" for="input-old-password">Stare hasło</label>
+            <div class="password-wrap">
+              <input class="form-input" type="password" id="input-old-password" placeholder="Wpisz stare hasło..." />
+              <button class="password-toggle" data-target="input-old-password" type="button">
+                <i data-lucide="eye" style="width: 15px; height: 15px"></i>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="input-new-password">Nowe hasło</label>
+            <div class="password-wrap">
+              <input class="form-input" type="password" id="input-new-password" placeholder="Wpisz nowe hasło..." />
+              <button class="password-toggle" data-target="input-new-password" type="button">
+                <i data-lucide="eye" style="width: 15px; height: 15px"></i>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="input-new-password2">Powtórz nowe hasło</label>
+            <div class="password-wrap">
+              <input class="form-input" type="password" id="input-new-password2" placeholder="Powtórz nowe hasło..." />
+              <button class="password-toggle" data-target="input-new-password2" type="button">
+                <i data-lucide="eye" style="width: 15px; height: 15px"></i>
+              </button>
+            </div>
+          </div>
+          <div class="login-error" id="change-password-error" style="display: none"></div>
+          <div class="login-success" id="change-password-success" style="display: none">Hasło zostało zmienione.</div>
+          <button class="popup-submit" id="popup-change-submit">Zapisz</button>
+          <button class="popup-back" id="popup-back">← Wróć</button>
+        </div>
+
+        <!-- Stan 2: formularz logowania -->
+        <div id="popup-login-form">
+          <h2 class="popup-title">Zaloguj się</h2>
+          <p class="popup-subtitle">Wpisz swoje dane dostępowe.</p>
+          <div class="form-group">
+            <label class="form-label" for="input-username">Login</label>
+            <input
+              class="form-input"
+              type="text"
+              id="input-username"
+              placeholder="Wpisz login..."
+              autocomplete="username"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="input-password">Hasło</label>
+            <div class="password-wrap">
+              <input
+                class="form-input"
+                type="password"
+                id="input-password"
+                placeholder="Wpisz hasło..."
+                autocomplete="current-password"
+              />
+              <button class="password-toggle" id="password-toggle" type="button">
+                <i data-lucide="eye" style="width: 15px; height: 15px"></i>
+              </button>
+            </div>
+          </div>
+          <div class="login-error" id="login-error" style="display: none">Nieprawidłowy login lub hasło.</div>
+          <button class="popup-submit" id="popup-submit">Zaloguj się</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <!-- GŁÓWNY LAYOUT -->
+    <div id="app" class="app-wrap" style="display: none">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="sb-header">
+          <div class="sb-logo">
+            <img src="assets/logo.png" alt="PMI Logo" class="sb-logo-img" />
+          </div>
+        </div>
+
+        <div class="sb-scroll">
+          <div class="sb-scroll-inner">
+            <!-- Nawigacja — budowana dynamicznie przez JS -->
+            <nav class="sb-nav" id="sb-nav"></nav>
+
+            <div class="sb-divider"></div>
+
+            <!-- BU / LU -->
+            <div id="bu-lu-section">
+              <div class="sb-section">
+                <div class="sb-section-label">Business Units</div>
+                <div class="sb-dropdowns">
+                  <div class="sb-select-wrap">
+                    <select class="sb-select" id="sb-bu-select">
+                      <option value="">— Wybierz BU —</option>
+                    </select>
+                  </div>
+                  <div class="sb-select-wrap" id="sb-lu-wrap" style="display: none">
+                    <select class="sb-select" id="sb-lu-select">
+                      <option value="">— Wybierz celkę —</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="sb-divider"></div>
+
+              <!-- Quick Links -->
+              <div id="quicklinks-container"></div>
+            </div>
+          </div>
+
+          <!-- Pogoda -->
+          <div class="sb-weather-fixed">
+            <div class="sb-divider" style="margin-bottom: 12px"></div>
+            <div class="sb-section-label" style="padding: 0 0 8px 0">Pogoda dziś</div>
+            <div class="weather-box" id="weather-box">
+              <div class="weather-loading">Ładowanie...</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+      <div class="main-area">
+        <!-- TOPBAR -->
+        <header class="topbar">
+          <div class="topbar-left">
+            <button class="hamburger-btn" id="hamburger-btn" onclick="toggleSidebar()" title="Menu">
+              <span></span><span></span><span></span>
+            </button>
+            <div class="user-avatar" id="user-avatar">MM</div>
+            <div>
+              <div class="user-greeting">Witaj, <span id="user-name-display">—</span></div>
+              <div class="user-meta">
+                <span id="user-bu-display">—</span>
+                &middot; Celka <span id="user-lu-display">—</span> &middot; Brygada
+                <span id="user-brigade-display">—</span>
+              </div>
+            </div>
+          </div>
+          <div class="topbar-right">
+            <div class="theme-toggle">
+              <button class="theme-btn" id="theme-light" onclick="setTheme('light')" title="Jasny">
+                <i data-lucide="sun" style="width: 13px; height: 13px"></i>
+              </button>
+              <button class="theme-btn" id="theme-dark" onclick="setTheme('dark')" title="Ciemny">
+                <i data-lucide="moon" style="width: 13px; height: 13px"></i>
+              </button>
+            </div>
+            <button class="icon-btn" onclick="openSettings()" title="Ustawienia">
+              <i data-lucide="settings" style="width: 15px; height: 15px"></i>
+            </button>
+            <div class="datetime-box">
+              <div class="date-str" id="date-display">—</div>
+              <div class="time-str" id="time-display">—:—</div>
+            </div>
+          </div>
+        </header>
+
+        <!-- CONTENT — strony podmieniane przez router -->
+        <main class="content-area">
+          <div class="content-inner" id="content"></div>
+        </main>
+      </div>
+    </div>
+
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>

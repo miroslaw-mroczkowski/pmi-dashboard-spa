@@ -1,0 +1,202 @@
+/* ============================================================
+   spa.css — Przyciski SPA Life i SPA Shifts
+   ============================================================ */
+
+.spa-row-wrap {
+  display: grid;
+  grid-template-columns: 65fr 35fr;
+  grid-template-rows: auto;
+  gap: 10px;
+}
+
+.spa-scale-wrap {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.spa-wrap {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: stretch;
+  justify-content: center;
+  max-width: 100%;
+  overflow: visible;
+  transform-origin: center top;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.spa-card {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.spa-future-card {
+  display: flex;
+  flex-direction: column;
+  padding: 14px 16px;
+  min-width: 0;
+  max-height: 400px;
+}
+
+.spa-panel {
+  flex: 1;
+  padding: 16px 32px;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.spa-panel.spa-future {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.spa-future-placeholder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.spa-separator {
+  width: 1px;
+  background: var(--border-default);
+  margin: 16px 0;
+  flex-shrink: 0;
+  transition: background 0.25s;
+}
+
+.spa-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
+}
+
+/* ── Kolumny ── */
+.spa-col-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--spa-other-bg);
+  border: 1px solid var(--spa-other-border);
+  border-radius: 9px;
+  padding: 6px;
+  width: fit-content;
+  flex-shrink: 0;
+  gap: 6px;
+  transition: background 0.25s, border-color 0.25s;
+}
+
+.spa-col-left.mine {
+  background: var(--spa-mine-bg);
+  border-color: var(--spa-mine-border);
+}
+
+.spa-col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.spa-col-right.paired {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  align-content: center;
+}
+
+.spa-group {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  align-items: center;
+  background: var(--spa-other-bg);
+  border: 1px solid var(--spa-other-border);
+  border-radius: 9px;
+  padding: 6px;
+  width: fit-content;
+  transition: background 0.25s, border-color 0.25s;
+}
+
+.spa-group.mine {
+  background: var(--spa-mine-bg);
+  border-color: var(--spa-mine-border);
+}
+
+.spa-cell-right, .spa-cell-left { display: none; }
+
+/* ── Przycisk maszyny ── */
+.spa-btn {
+  background: var(--bg-surface);
+  border: 1px solid var(--spa-other-border);
+  border-radius: 7px;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  transition: all 0.15s;
+  box-shadow: var(--shadow-card);
+}
+
+.spa-btn:hover { transform: translateY(-1px); opacity: 0.85; }
+
+.spa-btn.mine {
+  background: var(--spa-mine-bg);
+  border-color: var(--spa-mine-border);
+}
+
+.spa-col-left .spa-btn {
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.spa-col-left.mine .spa-btn {
+  background: var(--spa-mine-bg);
+  border-color: transparent;
+}
+
+.spa-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--spa-other-text);
+  line-height: 1;
+  transition: color 0.25s;
+}
+
+.spa-num.mine { color: var(--spa-mine-text); }
+
+.spa-sub {
+  font-size: 7px;
+  color: var(--spa-other-text);
+  margin-top: 2px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  transition: color 0.25s;
+}
+
+.spa-sub.mine { color: var(--spa-mine-text); opacity: 0.85; }

@@ -1,0 +1,232 @@
+/* ============================================================
+   responsive.css — Media queries
+   ============================================================ */
+
+@media (max-width: 1000px) {
+  .spa-row-wrap {
+    grid-template-columns: 1fr;
+  }
+  .spa-future-card {
+    min-height: 80px;
+    max-height: 120px;
+  }
+  .tools-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  }
+}
+
+@media (max-width: 1300px) {
+  .sidebar {
+    width: 210px;
+  }
+  .tools-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  }
+}
+
+@media (min-width: 1600px) {
+  .sidebar {
+    width: 248px;
+  }
+  .tools-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  }
+}
+
+@media (min-width: 1920px) {
+  .app-wrap {
+    max-width: 1800px;
+  }
+  .spa-btn {
+    width: 60px;
+    height: 60px;
+  }
+  .spa-num {
+    font-size: 17px;
+  }
+  .spa-col-left {
+    gap: 7px;
+    padding: 8px;
+  }
+  .spa-group {
+    gap: 7px;
+    padding: 7px;
+  }
+}
+
+@media (min-width: 2560px) {
+  .app-wrap {
+    max-width: 2400px;
+  }
+  .sidebar {
+    width: 280px;
+  }
+  .spa-btn {
+    width: 72px;
+    height: 72px;
+  }
+  .spa-num {
+    font-size: 20px;
+  }
+  .spa-sub {
+    font-size: 8px;
+  }
+  .spa-col-left {
+    gap: 9px;
+    padding: 9px;
+  }
+  .spa-group {
+    gap: 8px;
+    padding: 8px;
+  }
+  .nav-item {
+    font-size: 14px;
+    padding: 10px 14px;
+  }
+  .sb-section-label {
+    font-size: 10px;
+  }
+  .tools-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
+  .tool-btn {
+    height: 60px;
+  }
+  .time-str {
+    font-size: 20px;
+  }
+  .topbar {
+    padding: 14px 28px;
+  }
+}
+
+@media (max-height: 820px) {
+  .sb-nav {
+    padding: 6px 10px 2px;
+  }
+  .nav-item {
+    padding: 6px 10px;
+    font-size: 11px;
+    margin-bottom: 1px;
+  }
+  .sb-section {
+    padding: 6px 10px 2px;
+  }
+  .sb-section-label {
+    font-size: 8px;
+    margin-bottom: 2px;
+  }
+  .sb-select {
+    padding: 5px 24px 5px 8px;
+    font-size: 11px;
+  }
+  .ql-btn {
+    padding: 7px 6px;
+    font-size: 10px;
+  }
+  .sb-header {
+    padding: 8px 12px;
+  }
+  .sb-divider {
+    margin: 3px 14px;
+  }
+  .sb-weather-fixed {
+    padding: 0 10px 8px;
+  }
+  .weather-temp {
+    font-size: 15px;
+  }
+  .weather-icon {
+    font-size: 13px;
+  }
+  .weather-main {
+    margin-bottom: 1px;
+    gap: 4px;
+  }
+  .weather-desc {
+    font-size: 9px;
+    margin-bottom: 1px;
+  }
+  .weather-box {
+    padding: 5px 8px;
+  }
+  .weather-meta {
+    gap: 4px;
+  }
+  .weather-meta-item {
+    font-size: 8px;
+  }
+  .weather-city {
+    font-size: 8px;
+    margin-bottom: 1px;
+  }
+}
+
+/* ── Mobile ≤ 800px ── */
+@media (max-width: 800px) {
+  body {
+    overflow-y: auto;
+    align-items: flex-start;
+  }
+  .app-wrap {
+    width: 100%;
+    min-height: 100vh;
+    height: auto;
+    border-radius: 0;
+    padding: 10px;
+    gap: 8px;
+    overflow: visible;
+    flex-direction: column;
+  }
+  .main-area {
+    overflow: visible;
+    min-width: 0;
+    padding: 10px;
+  }
+  .topbar {
+    margin-bottom: 0;
+  }
+  .content-area {
+    overflow: visible;
+    padding: 0;
+  }
+  .content-inner {
+    height: auto;
+    gap: 8px;
+  }
+
+  .hamburger-btn {
+    display: flex;
+  }
+
+  .sidebar {
+    display: flex !important;
+    position: fixed;
+    left: -260px;
+    top: 10px;
+    bottom: 10px;
+    z-index: 100;
+    width: 240px !important;
+    border-radius: var(--radius-xl);
+    transition: left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .sidebar.open {
+    left: 10px;
+  }
+
+  .hide-mobile {
+    display: none;
+  }
+  .admin-table {
+    font-size: 10px;
+  }
+  .admin-table th,
+  .admin-table td {
+    padding: 7px 10px;
+  }
+  .stats-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+}

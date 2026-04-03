@@ -283,8 +283,11 @@ function makeToolCard(id, label, icon, tools) {
   tools.forEach((tool) => {
     const btn = el('a', `tool-btn${tool.primary ? ' primary' : ''}`);
     btn.href = tool.url;
-    btn.target = '_blank';
-    btn.rel = 'noopener';
+    btn.rel = 'noopener noreferrer';
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.open(tool.url, '_blank', 'noopener,noreferrer');
+    });
     btn.innerHTML = `<div class="tool-label">${tool.label}</div>`;
     grid.appendChild(btn);
   });

@@ -102,6 +102,8 @@ export function renderBUNav(userBU, userLU) {
     if (buId) {
       fillLUSelect(buId, null);
       luWrap.style.display = 'block';
+      renderSPA(null, buId);
+      setTimeout(initSpaScale, 50);
     } else {
       luWrap.style.display = 'none';
     }
@@ -118,6 +120,8 @@ export function renderBUNav(userBU, userLU) {
       DB.set('userBU', buId);
       if ($('user-lu-display')) $('user-lu-display').textContent = luId;
       if ($('user-bu-display')) $('user-bu-display').textContent = buId;
+      renderSPA(luId, buId);
+      setTimeout(initSpaScale, 50);
     }
   };
 }
@@ -165,10 +169,10 @@ export function renderQuickLinks() {
   });
 }
 
-/* ── Render dashboard PAGE ── */
+/* ── Render dashboard PAGE (wywoływane przez router) ── */
 export function renderDashboardPage(container, user) {
   container.innerHTML = `
-    <!-- Rząd 1: SPA -->
+    <!-- SPA -->
     <div class="spa-row-wrap">
       <div class="card spa-card">
         <div class="spa-panel">
@@ -212,87 +216,6 @@ export function renderDashboardPage(container, user) {
   renderToolGroups();
   if (window.lucide) lucide.createIcons();
   setTimeout(initSpaScale, 50);
-}
-
-/* ── Narzędzia — karty per group_name ── */
-
-// Kolejność i ikony grup na dashboardzie
-const GROUP_CONFIG = {
-  Produkcja: { row: 2, icon: 'factory', label: 'Produkcja' },
-  Codzienne: { row: 2, icon: 'check-square', label: 'Codzienne' },
-  Jakość: { row: 3, icon: 'shield-check', label: 'Jakość & Safety' },
-};
-
-function renderToolGroups() {
-  const tools = Data.getTools();
-  if (!tools.length) return;
-
-  // Pogrupuj po group_name
-  const grouped = {};
-  const ungrouped = [];
-
-  tools.forEach((tool) => {
-    if (tool.group) {
-      if (!grouped[tool.group]) grouped[tool.group] = [];
-      grouped[tool.group].push(tool);
-    } else {
-      ungrouped.push(tool);
-    }
-  });
-
-  // Renderuj grupy w odpowiednich rzędach
-  const row2 = $('tools-row-2');
-  const row3 = $('tools-row-3');
-
-  // Grupy ze skonfigurowaną kolejnością
-  Object.entries(GROUP_CONFIG).forEach(([groupName, config]) => {
-    const items = grouped[groupName];
-    if (!items?.length) return;
-    const card = makeToolCard(groupName, config.label, config.icon, items);
-    if (config.row === 2 && row2) row2.appendChild(card);
-    else if (config.row === 3 && row3) row3.appendChild(card);
-  });
-
-  // Grupy bez konfiguracji — dołącz do row3
-  Object.entries(grouped).forEach(([groupName, items]) => {
-    if (GROUP_CONFIG[groupName]) return; // już obsłużone
-    const card = makeToolCard(groupName, groupName, 'layout-grid', items);
-    if (row3) row3.appendChild(card);
-  });
-
-  // Narzędzia bez grupy — dołącz do row3 jako "Inne"
-  if (ungrouped.length) {
-    const card = makeToolCard('ungrouped', 'Inne', 'grid', ungrouped);
-    if (row3) row3.appendChild(card);
-  }
-
-  if (window.lucide) lucide.createIcons();
-}
-
-function makeToolCard(id, label, icon, tools) {
-  const card = el('div', 'card tool-group-card');
-  card.innerHTML = `
-    <div class="card-header">
-      <i data-lucide="${icon}" style="width:12px;height:12px;color:var(--color-accent)"></i>
-      <span class="card-title">${label}</span>
-      <div class="card-title-line"></div>
-    </div>
-    <div class="tools-grid" id="tools-grid-${id}"></div>`;
-
-  const grid = card.querySelector(`#tools-grid-${id}`);
-  tools.forEach((tool) => {
-    const btn = el('a', `tool-btn${tool.primary ? ' primary' : ''}`);
-    btn.href = tool.url;
-    btn.rel = 'noopener noreferrer';
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.open(tool.url, '_blank', 'noopener,noreferrer');
-    });
-    btn.innerHTML = `<div class="tool-label">${tool.label}</div>`;
-    grid.appendChild(btn);
-  });
-
-  return card;
 }
 
 /* ── SPA grid ── */
@@ -358,6 +281,80 @@ function renderSPA(myLU, myBU) {
     }
   });
   if (window.lucide) lucide.createIcons();
+}
+
+/* ── Narzędzia — karty per group_name ── */
+const GROUP_CONFIG = {
+  Produkcja: { row: 2, icon: 'factory', label: 'Produkcja' },
+  Codzienne: { row: 2, icon: 'check-square', label: 'Codzienne' },
+  Jakość: { row: 3, icon: 'shield-check', label: 'Jakość & Safety' },
+};
+
+function renderToolGroups() {
+  const tools = Data.getTools();
+  if (!tools.length) return;
+
+  const grouped = {};
+  const ungrouped = [];
+
+  tools.forEach((tool) => {
+    if (tool.group) {
+      if (!grouped[tool.group]) grouped[tool.group] = [];
+      grouped[tool.group].push(tool);
+    } else {
+      ungrouped.push(tool);
+    }
+  });
+
+  const row2 = $('tools-row-2');
+  const row3 = $('tools-row-3');
+
+  Object.entries(GROUP_CONFIG).forEach(([groupName, config]) => {
+    const items = grouped[groupName];
+    if (!items?.length) return;
+    const card = makeToolCard(groupName, config.label, config.icon, items);
+    if (config.row === 2 && row2) row2.appendChild(card);
+    else if (config.row === 3 && row3) row3.appendChild(card);
+  });
+
+  Object.entries(grouped).forEach(([groupName, items]) => {
+    if (GROUP_CONFIG[groupName]) return;
+    const card = makeToolCard(groupName, groupName, 'layout-grid', items);
+    if (row3) row3.appendChild(card);
+  });
+
+  if (ungrouped.length) {
+    const card = makeToolCard('ungrouped', 'Inne', 'grid', ungrouped);
+    if (row3) row3.appendChild(card);
+  }
+
+  if (window.lucide) lucide.createIcons();
+}
+
+function makeToolCard(id, label, icon, tools) {
+  const card = el('div', 'card tool-group-card');
+  card.innerHTML = `
+    <div class="card-header">
+      <i data-lucide="${icon}" style="width:12px;height:12px;color:var(--color-accent)"></i>
+      <span class="card-title">${label}</span>
+      <div class="card-title-line"></div>
+    </div>
+    <div class="tools-grid" id="tools-grid-${id}"></div>`;
+
+  const grid = card.querySelector(`#tools-grid-${id}`);
+  tools.forEach((tool) => {
+    const btn = el('a', `tool-btn${tool.primary ? ' primary' : ''}`);
+    btn.href = tool.url;
+    btn.rel = 'noopener noreferrer';
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.open(tool.url, '_blank', 'noopener,noreferrer');
+    });
+    btn.innerHTML = `<div class="tool-label">${tool.label}</div>`;
+    grid.appendChild(btn);
+  });
+
+  return card;
 }
 
 /* ── SPA auto-scale ── */

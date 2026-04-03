@@ -95,13 +95,29 @@ db.exec(`
   );
 `);
 
-// Migracja — dodaj lu_id do links jeśli nie istnieje
-try {
-  db.exec(`ALTER TABLE links ADD COLUMN lu_id TEXT REFERENCES line_units(id)`);
-  console.log('✅ Migracja: dodano lu_id do tabeli links');
-} catch {
-  // Kolumna już istnieje — ignoruj
-}
+// Migracje
+const migrations = [
+  [`ALTER TABLE links ADD COLUMN lu_id TEXT REFERENCES line_units(id)`, 'lu_id do links'],
+  [`ALTER TABLE links ADD COLUMN updated_at TEXT DEFAULT (datetime('now'))`, 'updated_at do links'],
+  [
+    `CREATE TABLE IF NOT EXISTS login_log (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id    INTEGER NOT NULL REFERENCES users(id),
+    username   TEXT NOT NULL,
+    logged_at  TEXT DEFAULT (datetime('now'))
+  )`,
+    'tabela login_log',
+  ],
+];
+
+migrations.forEach(([sql, name]) => {
+  try {
+    db.exec(sql);
+    console.log('✅ Migracja: ' + name);
+  } catch {
+    /* już istnieje */
+  }
+});
 
 console.log('✅ Tabele utworzone');
 module.exports = db;

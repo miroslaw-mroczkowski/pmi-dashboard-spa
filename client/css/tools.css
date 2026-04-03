@@ -4,23 +4,24 @@
 
 .tools-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  grid-auto-rows: 52px;
-  gap: 7px;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 140px));
+  grid-auto-rows: 48px;
+  gap: 6px;
+  justify-content: center;
 }
 
 .tool-btn {
   background: var(--tool-bg);
   border: 1px solid var(--tool-border);
   border-radius: var(--radius-sm);
-  padding: 0 10px;
+  padding: 0 8px;
   text-align: center;
   cursor: pointer;
   text-decoration: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 52px;
+  height: 100%;
   transition: all 0.15s;
 }
 
@@ -43,6 +44,13 @@
   transition: color 0.25s;
 }
 
-.tool-btn.primary .tool-label { color: var(--tool-primary-text); font-weight: 500; }
-.tool-btn:hover .tool-label { color: var(--color-accent); }
-.tool-btn.primary:hover .tool-label { color: var(--tool-primary-text); }
+.tool-btn.primary .tool-label {
+  color: var(--tool-primary-text);
+  font-weight: 500;
+}
+.tool-btn:hover .tool-label {
+  color: var(--color-accent);
+}
+.tool-btn.primary:hover .tool-label {
+  color: var(--tool-primary-text);
+}

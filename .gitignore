@@ -1,5 +1,29 @@
+# Zależności
 node_modules/
+
+# Baza danych
 database.db
 database.db-shm
 database.db-wal
+
+# Zmienne środowiskowe
 .env
+.env.local
+.env.production
+
+# Logi
+*.log
+npm-debug.log*
+
+# System
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Edytory
+.vscode/
+.idea/
+
+# Build
+dist/
+build/

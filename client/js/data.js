@@ -19,7 +19,9 @@ export async function loadAll() {
 export const getBUs = () => structure?.businessUnits || [];
 
 export const getLUsByBU = (buId) =>
-  getBUs().find((b) => b.id === buId)?.lu.map((lu) => lu.id) || [];
+  getBUs()
+    .find((b) => b.id === buId)
+    ?.lu.map((lu) => lu.id) || [];
 
 export const getLUData = (luId) => {
   for (const bu of getBUs()) {
@@ -30,6 +32,7 @@ export const getLUData = (luId) => {
 };
 
 export const getTools = () => links?.tools || [];
+export const getReports = () => links?.reports || [];
 export const getQuickLinkGroups = () => links?.quickLinkGroups || null;
 export const getSpaLinks = () => links?.spaLinks || [];
 

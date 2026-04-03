@@ -21,8 +21,18 @@ let spaObservers = [];
 /* ── Zegar ── */
 const DAYS = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
 const MONTHS = [
-  'stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca',
-  'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia',
+  'stycznia',
+  'lutego',
+  'marca',
+  'kwietnia',
+  'maja',
+  'czerwca',
+  'lipca',
+  'sierpnia',
+  'września',
+  'października',
+  'listopada',
+  'grudnia',
 ];
 
 export function startClock() {
@@ -30,7 +40,8 @@ export function startClock() {
     const now = new Date();
     const dateEl = $('date-display');
     const timeEl = $('time-display');
-    if (dateEl) dateEl.textContent = `${DAYS[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
+    if (dateEl)
+      dateEl.textContent = `${DAYS[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
     if (timeEl) timeEl.textContent = now.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
   }
   tick();
@@ -47,7 +58,12 @@ export function applyTheme(theme) {
 
 /* ── Topbar info ── */
 export function renderUserInfo(user) {
-  const initials = (user.userName || '?').split(' ').map((w) => w[0]).join('').substring(0, 2).toUpperCase();
+  const initials = (user.userName || '?')
+    .split(' ')
+    .map((w) => w[0])
+    .join('')
+    .substring(0, 2)
+    .toUpperCase();
   if ($('user-avatar')) $('user-avatar').textContent = initials;
   if ($('user-name-display')) $('user-name-display').textContent = user.userName || '—';
   if ($('user-bu-display')) $('user-bu-display').textContent = user.userBU || '—';
@@ -83,8 +99,12 @@ export function renderBUNav(userBU, userLU) {
   buSel.onchange = () => {
     const buId = buSel.value;
     buSel.classList.toggle('selected', !!buId);
-    if (buId) { fillLUSelect(buId, null); luWrap.style.display = 'block'; }
-    else { luWrap.style.display = 'none'; }
+    if (buId) {
+      fillLUSelect(buId, null);
+      luWrap.style.display = 'block';
+    } else {
+      luWrap.style.display = 'none';
+    }
   };
 
   luSel.onchange = () => {
@@ -92,8 +112,10 @@ export function renderBUNav(userBU, userLU) {
     const buId = buSel.value;
     luSel.classList.toggle('selected', !!luId);
     if (luId && buId) {
-      state.lu = luId; state.bu = buId;
-      DB.set('userLU', luId); DB.set('userBU', buId);
+      state.lu = luId;
+      state.bu = buId;
+      DB.set('userLU', luId);
+      DB.set('userBU', buId);
       if ($('user-lu-display')) $('user-lu-display').textContent = luId;
       if ($('user-bu-display')) $('user-bu-display').textContent = buId;
     }
@@ -132,7 +154,9 @@ export function renderQuickLinks() {
     const list = el('div', 'ql-list');
     group.links.forEach((link) => {
       const a = el('a', 'ql-btn');
-      a.href = link.url; a.target = '_blank'; a.rel = 'noopener';
+      a.href = link.url;
+      a.target = '_blank';
+      a.rel = 'noopener';
       a.textContent = link.label;
       list.appendChild(a);
     });
@@ -141,10 +165,10 @@ export function renderQuickLinks() {
   });
 }
 
-/* ── Render dashboard PAGE (wywoływane przez router) ── */
+/* ── Render dashboard PAGE ── */
 export function renderDashboardPage(container, user) {
   container.innerHTML = `
-    <!-- SPA -->
+    <!-- Rząd 1: SPA -->
     <div class="spa-row-wrap">
       <div class="card spa-card">
         <div class="spa-panel">
@@ -177,20 +201,95 @@ export function renderDashboardPage(container, user) {
         </div>
       </div>
     </div>
-    <!-- Narzędzia -->
-    <div class="card">
-      <div class="card-header">
-        <i data-lucide="layout-grid" style="width:12px;height:12px;color:var(--color-accent)"></i>
-        <span class="card-title">Narzędzia</span>
-        <div class="card-title-line"></div>
-      </div>
-      <div class="tools-grid" id="tools-grid"></div>
-    </div>`;
+
+    <!-- Rząd 2: Produkcja + Codzienne -->
+    <div class="tools-row tools-row-last" id="tools-row-2"></div>
+
+    <!-- Rząd 3: Jakość & Safety + pozostałe grupy -->
+    <div class="tools-row tools-row-last" id="tools-row-3"></div>`;
 
   renderSPA(user.userLU, user.userBU);
-  renderTools();
+  renderToolGroups();
   if (window.lucide) lucide.createIcons();
   setTimeout(initSpaScale, 50);
+}
+
+/* ── Narzędzia — karty per group_name ── */
+
+// Kolejność i ikony grup na dashboardzie
+const GROUP_CONFIG = {
+  Produkcja: { row: 2, icon: 'factory', label: 'Produkcja' },
+  Codzienne: { row: 2, icon: 'check-square', label: 'Codzienne' },
+  Jakość: { row: 3, icon: 'shield-check', label: 'Jakość & Safety' },
+};
+
+function renderToolGroups() {
+  const tools = Data.getTools();
+  if (!tools.length) return;
+
+  // Pogrupuj po group_name
+  const grouped = {};
+  const ungrouped = [];
+
+  tools.forEach((tool) => {
+    if (tool.group) {
+      if (!grouped[tool.group]) grouped[tool.group] = [];
+      grouped[tool.group].push(tool);
+    } else {
+      ungrouped.push(tool);
+    }
+  });
+
+  // Renderuj grupy w odpowiednich rzędach
+  const row2 = $('tools-row-2');
+  const row3 = $('tools-row-3');
+
+  // Grupy ze skonfigurowaną kolejnością
+  Object.entries(GROUP_CONFIG).forEach(([groupName, config]) => {
+    const items = grouped[groupName];
+    if (!items?.length) return;
+    const card = makeToolCard(groupName, config.label, config.icon, items);
+    if (config.row === 2 && row2) row2.appendChild(card);
+    else if (config.row === 3 && row3) row3.appendChild(card);
+  });
+
+  // Grupy bez konfiguracji — dołącz do row3
+  Object.entries(grouped).forEach(([groupName, items]) => {
+    if (GROUP_CONFIG[groupName]) return; // już obsłużone
+    const card = makeToolCard(groupName, groupName, 'layout-grid', items);
+    if (row3) row3.appendChild(card);
+  });
+
+  // Narzędzia bez grupy — dołącz do row3 jako "Inne"
+  if (ungrouped.length) {
+    const card = makeToolCard('ungrouped', 'Inne', 'grid', ungrouped);
+    if (row3) row3.appendChild(card);
+  }
+
+  if (window.lucide) lucide.createIcons();
+}
+
+function makeToolCard(id, label, icon, tools) {
+  const card = el('div', 'card tool-group-card');
+  card.innerHTML = `
+    <div class="card-header">
+      <i data-lucide="${icon}" style="width:12px;height:12px;color:var(--color-accent)"></i>
+      <span class="card-title">${label}</span>
+      <div class="card-title-line"></div>
+    </div>
+    <div class="tools-grid" id="tools-grid-${id}"></div>`;
+
+  const grid = card.querySelector(`#tools-grid-${id}`);
+  tools.forEach((tool) => {
+    const btn = el('a', `tool-btn${tool.primary ? ' primary' : ''}`);
+    btn.href = tool.url;
+    btn.target = '_blank';
+    btn.rel = 'noopener';
+    btn.innerHTML = `<div class="tool-label">${tool.label}</div>`;
+    grid.appendChild(btn);
+  });
+
+  return card;
 }
 
 /* ── SPA grid ── */
@@ -217,7 +316,8 @@ function renderSPA(myLU, myBU) {
     const makeBtn = (lineNum, isMine) => {
       const btn = el('a', `spa-btn${isMine ? ' mine' : ''}`);
       btn.href = Data.getSpaUrl(spa.id, lineNum);
-      btn.target = '_blank'; btn.rel = 'noopener';
+      btn.target = '_blank';
+      btn.rel = 'noopener';
       btn.innerHTML = `<div class="spa-num${isMine ? ' mine' : ''}">${lineNum}</div>
         <div class="spa-sub${isMine ? ' mine' : ''}">${spaLabel}</div>`;
       return btn;
@@ -257,21 +357,6 @@ function renderSPA(myLU, myBU) {
   if (window.lucide) lucide.createIcons();
 }
 
-/* ── Narzędzia ── */
-function renderTools() {
-  const grid = $('tools-grid');
-  if (!grid) return;
-  grid.innerHTML = '';
-  const PRIMARY = ['portal_kierownika', 'lista_zlecen', 'andon', 'plan_produkcji'];
-  Data.getTools().forEach((tool) => {
-    const isPrimary = PRIMARY.includes(tool.id);
-    const btn = el('a', `tool-btn${isPrimary ? ' primary' : ''}`);
-    btn.href = tool.url; btn.target = '_blank'; btn.rel = 'noopener';
-    btn.innerHTML = `<div class="tool-label">${tool.label}</div>`;
-    grid.appendChild(btn);
-  });
-}
-
 /* ── SPA auto-scale ── */
 function initSpaScale() {
   spaObservers.forEach((ro) => ro.disconnect());
@@ -292,7 +377,9 @@ function initSpaScale() {
       wrap.style.height = h + 'px';
       wrap.style.marginBottom = Math.round(h * scale - h) + 'px';
     } else {
-      wrap.style.transform = ''; wrap.style.height = ''; wrap.style.marginBottom = '';
+      wrap.style.transform = '';
+      wrap.style.height = '';
+      wrap.style.marginBottom = '';
     }
   }
 
@@ -301,7 +388,9 @@ function initSpaScale() {
     if (!wrap) return;
     const panel = wrap.closest('.spa-panel');
     if (!panel) return;
-    wrap.style.transform = ''; wrap.style.height = ''; wrap.style.marginBottom = '';
+    wrap.style.transform = '';
+    wrap.style.height = '';
+    wrap.style.marginBottom = '';
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         wrap.style.width = 'max-content';

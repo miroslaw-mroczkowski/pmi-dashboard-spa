@@ -116,3 +116,37 @@ body {
   min-height: 0;
   overflow-y: auto;
 }
+
+/* ── Tool group rows ── */
+.content-inner {
+  width: 100%;
+}
+
+.tools-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  align-items: stretch;
+}
+
+.tools-row:empty {
+  display: none;
+}
+
+.tool-group-card {
+  flex: 1;
+  min-width: 0;
+}
+
+.tools-row-last {
+  flex: 1;
+}
+
+.tools-row-last .tool-group-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.tools-row-last .tools-grid {
+  flex: 1;
+}

@@ -65,11 +65,12 @@ const insertLink = db.prepare(`
     null,
     1,
     0,
+    'Produkcja',
   ],
-  ['bos', 'BOS', 'https://app.pmidigiperf.com/bos/surveys/active', null, 0, 1],
-  ['qbos', 'QBOS', 'https://app.pmidigiperf.com/qbos/surveys/active', null, 0, 2],
-  ['digiperf', 'DigiPerf', '#', null, 0, 3],
-  ['g42_44_docs', 'G42/44 DOCS', '#', null, 0, 4],
+  ['bos', 'BOS', 'https://app.pmidigiperf.com/bos/surveys/active', null, 0, 1, 'Codzienne'],
+  ['qbos', 'QBOS', 'https://app.pmidigiperf.com/qbos/surveys/active', null, 0, 2, 'Codzienne'],
+  ['digiperf', 'DigiPerf', '#', null, 0, 3, 'Codzienne'],
+  ['g42_44_docs', 'G42/44 DOCS', '#', null, 0, 4, null],
   [
     'lista_zlecen',
     'Lista Zleceń',
@@ -77,12 +78,21 @@ const insertLink = db.prepare(`
     null,
     1,
     5,
+    'Produkcja',
   ],
-  ['flagi', 'Flagi', '#', null, 0, 6],
-  ['incydenty', 'Incydenty', 'https://zglosincydent.pl.pmi/?CurrentPage=1', null, 0, 7],
-  ['raport_flag', 'Raport Flag', '#', null, 0, 8],
-  ['szkolenia', 'Szkolenia', 'https://philipmor.plateau.com/learning/user/personal/landOnPortalHome.do', null, 0, 9],
-  ['zgloszenie_zagr', 'Zgłoszenie Zagrożenia', '#', null, 0, 10],
+  ['flagi', 'Flagi', '#', null, 0, 6, 'Jakość'],
+  ['incydenty', 'Incydenty', 'https://zglosincydent.pl.pmi/?CurrentPage=1', null, 0, 7, 'Jakość'],
+  ['raport_flag', 'Raport Flag', '#', null, 0, 8, 'Jakość'],
+  [
+    'szkolenia',
+    'Szkolenia',
+    'https://philipmor.plateau.com/learning/user/personal/landOnPortalHome.do',
+    null,
+    0,
+    9,
+    null,
+  ],
+  ['zgloszenie_zagr', 'Zgłoszenie Zagrożenia', '#', null, 0, 10, null],
   [
     'andon',
     'ANDON',
@@ -90,10 +100,27 @@ const insertLink = db.prepare(`
     null,
     1,
     11,
+    'Produkcja',
   ],
-  ['daily_uptime', 'Daily Uptime', '#', null, 0, 12],
-  ['mes', 'MES', 'https://ssrs_prd.plkrk.dbaas.sdi.pmi/prd/report/PLM/PMPL/Production/ReportDashboard', null, 0, 13],
-  ['les', 'LES', 'https://ssrs_prd.plkrk.dbaas.sdi.pmi/prd/report/PLM/PMPL/Logistic/LES_PORTAL', null, 0, 14],
+  ['daily_uptime', 'Daily Uptime', '#', null, 0, 12, null],
+  [
+    'mes',
+    'MES',
+    'https://ssrs_prd.plkrk.dbaas.sdi.pmi/prd/report/PLM/PMPL/Production/ReportDashboard',
+    null,
+    0,
+    13,
+    'Produkcja',
+  ],
+  [
+    'les',
+    'LES',
+    'https://ssrs_prd.plkrk.dbaas.sdi.pmi/prd/report/PLM/PMPL/Logistic/LES_PORTAL',
+    null,
+    0,
+    14,
+    'Produkcja',
+  ],
   [
     'baza_opl',
     'Baza OPL',
@@ -101,6 +128,7 @@ const insertLink = db.prepare(`
     null,
     0,
     15,
+    null,
   ],
   [
     'plan_produkcji',
@@ -109,9 +137,10 @@ const insertLink = db.prepare(`
     null,
     1,
     16,
+    'Produkcja',
   ],
-].forEach(([key, label, url, pattern, primary, order]) =>
-  insertLink.run('tool', key, label, url, pattern, null, primary, order),
+].forEach(([key, label, url, pattern, primary, order, group]) =>
+  insertLink.run('tool', key, label, url, pattern, group, primary, order),
 );
 
 // SPA
@@ -165,6 +194,19 @@ db.prepare(
   VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 `,
 ).run('testuser', 'Jan', 'Kowalski', 'A', '31/41', 'BU1', testUserHash, 'user');
+
+// ── Migracja grup narzędzi ────────────────────────────────
+const groupUpdates = [
+  ['Produkcja', ['portal_kierownika', 'lista_zlecen', 'andon', 'plan_produkcji', 'mes', 'les']],
+  ['Codzienne', ['bos', 'qbos', 'digiperf']],
+  ['Jakość', ['incydenty', 'raport_flag', 'flagi']],
+];
+groupUpdates.forEach(([group, keys]) => {
+  keys.forEach((key) => {
+    db.prepare('UPDATE links SET group_name = ? WHERE link_key = ? AND group_name IS NULL').run(group, key);
+  });
+});
+console.log('✅ Grupy narzędzi zaktualizowane');
 
 console.log('✅ Seedowanie zakończone!');
 console.log('   Admin:  mrocz / test123');

@@ -1,14 +1,8 @@
 'use strict';
 require('dotenv').config();
 
-// Auto-seed przy starcie
-try {
-  require('./db/seed.js');
-  console.log('✅ Seed wykonany');
-} catch (err) {
-  console.error('❌ Seed error:', err.message);
-  console.error(err.stack);
-}
+// Auto-seed przy starcie (INSERT OR IGNORE — bezpieczne przy restartach)
+require('./db/seed.js');
 
 const express = require('express');
 const cors = require('cors');

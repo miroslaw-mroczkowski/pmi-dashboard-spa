@@ -5,15 +5,15 @@ const db = require('./schema');
 
 console.log('🌱 Seedowanie...');
 
-// ── Użytkownicy ──────────────────────────────────────────────
+// ── Użytkownicy app ──────────────────────────────────────────
 const userHash = bcrypt.hashSync(process.env.USER_PASSWORD || 'mistrz2026', 10);
 const adminHash = bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'admin2026', 10);
-
-db.prepare(
-  `
-  INSERT OR REPLACE INTO app_users (role, password_hash) VALUES (?, ?), (?, ?)
-`,
-).run('user', userHash, 'admin', adminHash);
+db.prepare(`INSERT OR REPLACE INTO app_users (role, password_hash) VALUES (?, ?), (?, ?)`).run(
+  'user',
+  userHash,
+  'admin',
+  adminHash,
+);
 
 // ── Business Units ───────────────────────────────────────────
 const insertBU = db.prepare('INSERT OR IGNORE INTO business_units (id, name) VALUES (?, ?)');
@@ -24,7 +24,7 @@ const insertBU = db.prepare('INSERT OR IGNORE INTO business_units (id, name) VAL
   ['BU5', 'Business Unit 5'],
 ].forEach(([id, name]) => insertBU.run(id, name));
 
-// ── Line Units + maszyny ─────────────────────────────────────
+// ── Line Units + linie ───────────────────────────────────────
 const insertLU = db.prepare('INSERT OR IGNORE INTO line_units (id, bu_id, display_order) VALUES (?, ?, ?)');
 const insertLine = db.prepare('INSERT OR IGNORE INTO lines (lu_id, line_number, display_order) VALUES (?, ?, ?)');
 
@@ -49,7 +49,7 @@ luData.forEach((lu) => {
   lu.lines.forEach((line, i) => insertLine.run(lu.id, line, i));
 });
 
-// ── Links (tools + spa + quick_links) ────────────────────────
+// ── Links ────────────────────────────────────────────────────
 const insertLink = db.prepare(`
   INSERT OR IGNORE INTO links
     (type, link_key, label, url, url_pattern, group_name, is_primary, display_order)
@@ -58,65 +58,114 @@ const insertLink = db.prepare(`
 
 // Narzędzia
 [
-  ['portal_kierownika', 'Portal Kierownika', '#', 1, 0],
-  ['bos', 'BOS', '#', 0, 1],
-  ['qbos', 'QBOS', '#', 0, 2],
-  ['digiperf', 'DigiPerf', '#', 0, 3],
-  ['g42_44_docs', 'G42/44 DOCS', '#', 0, 4],
-  ['spa', 'SPA', '#', 0, 5],
-  ['lista_zlecen', 'Lista Zleceń', '#', 1, 6],
-  ['flagi', 'Flagi', '#', 0, 7],
-  ['incydenty', 'Incydenty', '#', 0, 8],
-  ['raport_flag', 'Raport Flag', '#', 0, 9],
-  ['szkolenia', 'Szkolenia', '#', 0, 10],
-  ['zgloszenie_zagr', 'Zgłoszenie Zagrożenia', '#', 0, 11],
-  ['andon', 'ANDON', '#', 1, 12],
-  ['daily_uptime', 'Daily Uptime', '#', 0, 13],
-  ['mes', 'MES', '#', 0, 14],
-  ['les', 'LES', '#', 0, 15],
-  ['baza_opl', 'Baza OPL', '#', 0, 16],
-  ['plan_produkcji', 'Plan Produkcji', '#', 1, 17],
-].forEach(([key, label, url, primary, order]) => insertLink.run('tool', key, label, url, null, null, primary, order));
+  [
+    'portal_kierownika',
+    'Portal Kierownika',
+    'http://lesmes.pl.pmi/Apriso/Start/logon.html?TabID=0&track=client',
+    null,
+    1,
+    0,
+  ],
+  ['bos', 'BOS', 'https://app.pmidigiperf.com/bos/surveys/active', null, 0, 1],
+  ['qbos', 'QBOS', 'https://app.pmidigiperf.com/qbos/surveys/active', null, 0, 2],
+  ['digiperf', 'DigiPerf', '#', null, 0, 3],
+  ['g42_44_docs', 'G42/44 DOCS', '#', null, 0, 4],
+  [
+    'lista_zlecen',
+    'Lista Zleceń',
+    'https://ssrs_prd.plkrk.dbaas.sdi.pmi/prd/report/PLM/PMPL/Production/Secondary/SupervisorPortal',
+    null,
+    1,
+    5,
+  ],
+  ['flagi', 'Flagi', '#', null, 0, 6],
+  ['incydenty', 'Incydenty', 'https://zglosincydent.pl.pmi/?CurrentPage=1', null, 0, 7],
+  ['raport_flag', 'Raport Flag', '#', null, 0, 8],
+  ['szkolenia', 'Szkolenia', 'https://philipmor.plateau.com/learning/user/personal/landOnPortalHome.do', null, 0, 9],
+  ['zgloszenie_zagr', 'Zgłoszenie Zagrożenia', '#', null, 0, 10],
+  [
+    'andon',
+    'ANDON',
+    'https://ssrs_prd.plkrk.dbaas.sdi.pmi/prd/report/PLM/PMPL/Production/Secondary/AndonForTL_MTBF',
+    null,
+    1,
+    11,
+  ],
+  ['daily_uptime', 'Daily Uptime', '#', null, 0, 12],
+  ['mes', 'MES', 'https://ssrs_prd.plkrk.dbaas.sdi.pmi/prd/report/PLM/PMPL/Production/ReportDashboard', null, 0, 13],
+  ['les', 'LES', 'https://ssrs_prd.plkrk.dbaas.sdi.pmi/prd/report/PLM/PMPL/Logistic/LES_PORTAL', null, 0, 14],
+  [
+    'baza_opl',
+    'Baza OPL',
+    'https://pmicloud.sharepoint.com/sites/RefBazaOPL/BazaOPLSecondary_BazaOPL/Forms/View%202.aspx',
+    null,
+    0,
+    15,
+  ],
+  [
+    'plan_produkcji',
+    'Plan Produkcji',
+    'https://app.powerbi.com/groups/18ebb9ee-9b16-4ac0-abaa-61ad1433a751/rdlreports/8a4b7de5-5005-43d7-9795-6db210f98956?experience=power-bi',
+    null,
+    1,
+    16,
+  ],
+].forEach(([key, label, url, pattern, primary, order]) =>
+  insertLink.run('tool', key, label, url, pattern, null, primary, order),
+);
 
 // SPA
 [
-  ['spa_life', 'SPA Life', '#', 'https://spa-system/life/{lu}', 0],
-  ['spa_shifts', 'SPA Shifts', '#', 'https://spa-system/shifts/{lu}', 1],
+  [
+    'spa_life',
+    'SPA Life',
+    '#',
+    'https://ots.spappa.aws.private-pmideep.biz/db.aspx?table=SPA_LiveCockpit&eoa=x&act=query&db_Line=PL02-SE-CP-L0{lu}',
+    0,
+  ],
+  [
+    'spa_shifts',
+    'SPA Shifts',
+    '#',
+    'https://ots.spappa.aws.private-pmideep.biz/db.aspx?table=SPA_ShiftPO_Overview&eoa=x&act=query&db_Line=PL02-SE-CP-L0{lu}',
+    1,
+  ],
 ].forEach(([key, label, url, pattern, order]) => insertLink.run('spa', key, label, url, pattern, null, 0, order));
 
 // Quick Links
 [
-  ['mypmi', 'MyPMI', '#', null, 0],
-  ['my_pc', 'My P&C', '#', null, 1],
-  ['interact', 'InteracT', '#', null, 2],
-  ['one_poland', 'One Poland', '#', null, 3],
+  ['mypmi', 'MyPMI', 'https://mypmi.my.site.com/s/', null, 0],
+  ['my_pc', 'My P&C', 'https://performancemanager.successfactors.eu/sf/home?company=PMIProd', null, 1],
+  ['interact', 'InteracT', 'https://pmiprod.service-now.com/interact', null, 2],
+  ['one_poland', 'One Poland', 'https://pmicloud.sharepoint.com/sites/RefPoland', null, 3],
   ['czas_pracy', 'Czas Pracy', '#', null, 4],
-  ['multisport', 'MultiSport', '#', null, 5],
-  ['udemy', 'Udemy', '#', 'Nauka', 0],
-  ['rosetta', 'Rosetta Stone', '#', 'Nauka', 1],
-  ['pmi_campus', 'PMI Campus', '#', 'Nauka', 2],
-  ['szkolenia_ql', 'Szkolenia', '#', 'Nauka', 3],
+  ['urlopy', 'Urlopy', 'https://mypmi.my.site.com/s/team-leave-and-absences', null, 5],
+  ['multisport', 'MultiSport', 'https://www.emultisport.pl/dashboard', null, 6],
+  ['udemy', 'Udemy', 'https://pmi.udemy.com/', 'Nauka', 0],
+  ['rosetta', 'Rosetta Stone', 'https://pmi.fuseuniversal.com/communities/21541/contents/1036207', 'Nauka', 1],
+  ['pmi_campus', 'PMI Campus', 'https://pmi.fuseuniversal.com/', 'Nauka', 2],
+  ['szkolenia_ql', 'Szkolenia', 'https://philipmor.plateau.com/learning/user/personal/landOnPortalHome.do', 'Nauka', 3],
 ].forEach(([key, label, url, group, order]) => insertLink.run('quick_link', key, label, url, null, group, 0, order));
 
-// ── Użytkownik testowy ───────────────────────────────────────
-const testHash = bcrypt.hashSync('test123', 10);
+// ── Użytkownicy testowi ──────────────────────────────────────
+const testAdminHash = bcrypt.hashSync('test123', 10);
 db.prepare(
   `
-  INSERT OR IGNORE INTO users 
+  INSERT OR IGNORE INTO users
     (username, first_name, last_name, brigade, lu_id, bu_id, password_hash, role)
   VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 `,
-).run('mrocz', 'Miro', 'Mroczkowski', 'B', '42/44', 'BU1', testHash, 'admin');
+).run('mrocz', 'Miro', 'Mroczkowski', 'B', '42/44', 'BU1', testAdminHash, 'admin');
 
-const userTestHash = bcrypt.hashSync('user123', 10);
+const testUserHash = bcrypt.hashSync('user123', 10);
 db.prepare(
   `
-  INSERT OR IGNORE INTO users 
+  INSERT OR IGNORE INTO users
     (username, first_name, last_name, brigade, lu_id, bu_id, password_hash, role)
   VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 `,
-).run('testuser', 'Jan', 'Kowalski', 'A', '31/41', 'BU1', userTestHash, 'user');
+).run('testuser', 'Jan', 'Kowalski', 'A', '31/41', 'BU1', testUserHash, 'user');
 
 console.log('✅ Seedowanie zakończone!');
-console.log('   Hasło mistrzów:', process.env.USER_PASSWORD || 'mistrz2026');
-console.log('   Hasło admina:  ', process.env.ADMIN_PASSWORD || 'admin2026');
+console.log('   Admin:  mrocz / test123');
+console.log('   User:   testuser / user123');

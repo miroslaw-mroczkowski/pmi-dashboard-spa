@@ -81,7 +81,7 @@ export function renderBUNav(userBU, userLU) {
   const luWrap = $('sb-lu-wrap');
   if (!buSel) return;
 
-  buSel.innerHTML = '<option value="">— Wybierz BU —</option>';
+  buSel.innerHTML = '<option value="">— Select Unit —</option>';
   Data.getBUs().forEach((bu) => {
     const opt = document.createElement('option');
     opt.value = bu.id;
@@ -118,8 +118,6 @@ export function renderBUNav(userBU, userLU) {
       state.bu = buId;
       DB.set('userLU', luId);
       DB.set('userBU', buId);
-      if ($('user-lu-display')) $('user-lu-display').textContent = luId;
-      if ($('user-bu-display')) $('user-bu-display').textContent = buId;
       renderSPA(luId, buId);
       setTimeout(initSpaScale, 50);
     }
@@ -129,7 +127,7 @@ export function renderBUNav(userBU, userLU) {
 function fillLUSelect(buId, selectedLU) {
   const luSel = $('sb-lu-select');
   if (!luSel) return;
-  luSel.innerHTML = '<option value="">— Wybierz celkę —</option>';
+  luSel.innerHTML = '<option value="">— Select Cell —</option>';
   Data.getLUsByBU(buId).forEach((luId) => {
     const opt = document.createElement('option');
     opt.value = luId;
@@ -178,7 +176,7 @@ export function renderDashboardPage(container, user) {
         <div class="spa-panel">
           <div class="spa-panel-header">
             <i data-lucide="activity" style="width:12px;height:12px;color:var(--color-accent)"></i>
-            <span class="card-title">SPA Life</span>
+            <span class="card-title">SPA Live</span>
             <div class="card-title-line"></div>
           </div>
           <div class="spa-wrap" id="spa-life-grid"></div>
@@ -196,7 +194,7 @@ export function renderDashboardPage(container, user) {
       <div class="card spa-future-card">
         <div class="spa-panel-header">
           <i data-lucide="bar-chart-2" style="width:12px;height:12px;color:var(--color-accent)"></i>
-          <span class="card-title">Wkrótce</span>
+          <span class="card-title">Coming Soon</span>
           <div class="card-title-line"></div>
         </div>
         <div class="spa-future-placeholder">
@@ -287,7 +285,7 @@ function renderSPA(myLU, myBU) {
 const GROUP_CONFIG = {
   Produkcja: { row: 2, icon: 'factory', label: 'Produkcja' },
   Codzienne: { row: 2, icon: 'check-square', label: 'Codzienne' },
-  Jakość: { row: 3, icon: 'shield-check', label: 'Jakość & Safety' },
+  Jakość: { row: 3, icon: 'shield-check', label: 'Jakość & BHP' },
 };
 
 function renderToolGroups() {

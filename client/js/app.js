@@ -90,7 +90,10 @@ async function init() {
     registerPages();
 
     const token = saved.token;
-    if (!token) { Popup.open(); return; }
+    if (!token) {
+      Popup.open();
+      return;
+    }
 
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
@@ -99,7 +102,18 @@ async function init() {
         await DB.set('user', null);
         Popup.open();
       } else {
-        showApp(JSON.parse(saved.user));
+        // Zawsze czytaj dane z tokena JWT (nie z IndexedDB) żeby mieć aktualne dane
+        const userFromToken = {
+          id: payload.id,
+          username: payload.username,
+          role: payload.role,
+          brigade: payload.brigade,
+          lu_id: payload.lu_id,
+          bu_id: payload.bu_id,
+          first_name: payload.first_name,
+          last_name: payload.last_name,
+        };
+        showApp(userFromToken);
       }
     } catch {
       Popup.open();

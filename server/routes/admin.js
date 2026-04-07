@@ -134,4 +134,67 @@ router.get('/stats', (req, res) => {
   res.json({ users, activeUsers, links, pendingResets });
 });
 
+// GET /api/admin/activity — ostatnia aktywność
+router.get('/activity', (req, res) => {
+  const recentUsers = db
+    .prepare(
+      `SELECT id, username, first_name, last_name, role, created_at
+     FROM users ORDER BY created_at DESC LIMIT 5`,
+    )
+    .all();
+
+  const recentLinks = db
+    .prepare(
+      `SELECT id, label, type, group_name, updated_at
+     FROM links ORDER BY updated_at DESC LIMIT 5`,
+    )
+    .all();
+
+  const recentLogins = db
+    .prepare(
+      `SELECT l.username, l.logged_at, u.first_name, u.last_name
+     FROM login_log l
+     LEFT JOIN users u ON u.username = l.username
+     ORDER BY l.logged_at DESC LIMIT 5`,
+    )
+    .all();
+
+  res.json({ recentUsers, recentLinks, recentLogins });
+});
+
+// PATCH /api/admin/users/:id — edytuj użytkownika
+router.patch('/users/:id', (req, res) => {
+  const { first_name, last_name, brigade, lu_id, bu_id, role, password } = req.body;
+  const user = db.prepare('SELECT id FROM users WHERE id = ?').get(req.params.id);
+  if (!user) return res.status(404).json({ error: 'Nie znaleziono użytkownika' });
+
+  if (password) {
+    const bcrypt = require('bcryptjs');
+    const password_hash = bcrypt.hashSync(password, 10);
+    db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(password_hash, req.params.id);
+  }
+
+  db.prepare(
+    `
+    UPDATE users SET
+      first_name = COALESCE(?, first_name),
+      last_name = COALESCE(?, last_name),
+      brigade = COALESCE(?, brigade),
+      lu_id = ?,
+      bu_id = ?,
+      role = COALESCE(?, role)
+    WHERE id = ?
+  `,
+  ).run(first_name, last_name, brigade, lu_id || null, bu_id || null, role, req.params.id);
+
+  res.json({ success: true });
+});
+
+// GET /api/admin/structure — BU i LU do dropdownów
+router.get('/structure', (req, res) => {
+  const bus = db.prepare('SELECT * FROM business_units ORDER BY id').all();
+  const lus = db.prepare('SELECT * FROM line_units ORDER BY bu_id, display_order').all();
+  res.json({ bus, lus });
+});
+
 module.exports = router;

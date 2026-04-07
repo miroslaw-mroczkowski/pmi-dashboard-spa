@@ -282,7 +282,7 @@ function renderSPA(myLU, myBU) {
 }
 
 /* ── Narzędzia — karty per group (z bazy) ── */
-function renderToolGroups() {
+export function renderToolGroups() {
   const groups = Data.getDashboardGroups();
   const tools = Data.getTools();
   const row2 = $('tools-row-2');

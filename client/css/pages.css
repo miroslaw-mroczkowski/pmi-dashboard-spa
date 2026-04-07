@@ -540,3 +540,38 @@
 .panel-card .admin-table tbody tr:last-child td {
   border-bottom: none;
 }
+
+/* ── Akordeony ── */
+.accordion-trigger:hover td {
+  background: var(--bg-surface-2);
+}
+
+.accordion-open td {
+  background: var(--color-accent-dim) !important;
+  color: var(--color-accent);
+}
+
+.accordion-row {
+  background: var(--bg-surface-2);
+}
+
+.accordion-cell {
+  padding: 0 !important;
+  border-bottom: 2px solid var(--color-accent-border) !important;
+}
+
+.accordion-form {
+  padding: 16px 18px;
+}
+
+.accordion-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.accordion-add-bar {
+  padding: 10px 18px;
+  border-bottom: 1px solid var(--border-default);
+}

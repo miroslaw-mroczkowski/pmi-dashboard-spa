@@ -50,23 +50,27 @@ router.get('/', (req, res) => {
 
     // Najpierw grupy z link_groups (zachowaj kolejność)
     sidebarGroups.forEach((g) => {
-      const links = quickRaw.filter((l) => l.group_name === g.name);
+      const links = quickRaw.filter((l) => l.group_id === g.id || l.group_name === g.name);
       if (links.length) {
         quickGroups.push({
           label: g.label,
           links: links.map((l) => ({ id: l.link_key, label: l.label, url: l.url })),
         });
+        seen[g.id] = true;
         seen[g.name] = true;
       }
     });
 
-    // Linki bez grupy lub z nieznaną grupą
-    const noGroup = quickRaw.filter((l) => !l.group_name || !seen[l.group_name]);
-    if (noGroup.length) {
-      quickGroups.unshift({
-        label: null,
-        links: noGroup.map((l) => ({ id: l.link_key, label: l.label, url: l.url })),
-      });
+    // Linki bez grupy — dodaj do pierwszej grupy sidebar lub pomiń
+    const noGroup = quickRaw.filter((l) => !seen[l.group_id] && !seen[l.group_name]);
+    if (noGroup.length && sidebarGroups.length) {
+      const defaultGroup = sidebarGroups[0];
+      let existing = quickGroups.find((g) => g.label === defaultGroup.label);
+      if (!existing) {
+        existing = { label: defaultGroup.label, links: [] };
+        quickGroups.unshift(existing);
+      }
+      noGroup.forEach((l) => existing.links.push({ id: l.link_key, label: l.label, url: l.url }));
     }
 
     // Grupy dla dashboardu i raportów (do renderowania boxów)

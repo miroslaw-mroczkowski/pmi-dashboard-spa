@@ -1,9 +1,5 @@
 'use strict';
 
-/* ============================================================
-   data.js — Dane z API (struktura BU/LU, linki)
-   ============================================================ */
-
 let structure = null;
 let links = null;
 
@@ -35,6 +31,8 @@ export const getTools = () => links?.tools || [];
 export const getReports = () => links?.reports || [];
 export const getQuickLinkGroups = () => links?.quickLinkGroups || null;
 export const getSpaLinks = () => links?.spaLinks || [];
+export const getDashboardGroups = () => links?.dashboardGroups || [];
+export const getReportGroups = () => links?.reportGroups || [];
 
 export function getSpaUrl(spaId, lineNum) {
   const spa = getSpaLinks().find((s) => s.id === spaId);

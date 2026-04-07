@@ -58,11 +58,14 @@ body {
 }
 
 .content-area::-webkit-scrollbar {
-  width: 4px;
+  width: 6px;
 }
 .content-area::-webkit-scrollbar-thumb {
-  background: var(--border-default);
-  border-radius: 2px;
+  background: var(--border-strong);
+  border-radius: 99px;
+}
+.content-area::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .content-inner {
@@ -110,43 +113,38 @@ body {
   transition: background 0.25s;
 }
 
-/* Karta narzędzi — wypełnia przestrzeń, scrolluje gdy za dużo */
+/* Karta narzędzi — wypełnia resztę */
 .content-inner > .card:last-child {
   flex: 1;
-  min-height: 0;
-  overflow-y: auto;
+  min-height: 120px;
 }
 
-/* ── Tool group rows ── */
-.content-inner {
-  width: 100%;
+/* ── Custom scrollbar — globalny ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
 }
 
-.tools-row {
-  display: flex;
-  gap: 10px;
-  width: 100%;
-  align-items: stretch;
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-.tools-row:empty {
-  display: none;
+*::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 99px;
 }
 
-.tool-group-card {
-  flex: 1;
-  min-width: 0;
+*::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 99px;
+  transition: background 0.2s;
 }
 
-.tools-row-last {
-  flex: 1;
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
 }
 
-.tools-row-last .tool-group-card {
-  display: flex;
-  flex-direction: column;
-}
-
-.tools-row-last .tools-grid {
-  flex: 1;
+*::-webkit-scrollbar-corner {
+  background: transparent;
 }

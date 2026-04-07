@@ -93,6 +93,15 @@ db.exec(`
     requested_at TEXT DEFAULT (datetime('now')),
     status       TEXT DEFAULT 'pending'
   );
+
+  CREATE TABLE IF NOT EXISTS link_groups (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    name          TEXT UNIQUE NOT NULL,
+    label         TEXT NOT NULL,
+    icon          TEXT DEFAULT 'layout-grid',
+    page          TEXT NOT NULL DEFAULT 'dashboard',
+    display_order INTEGER DEFAULT 0
+  );
 `);
 
 // Migracje
@@ -108,6 +117,7 @@ const migrations = [
   )`,
     'tabela login_log',
   ],
+  [`ALTER TABLE links ADD COLUMN group_id INTEGER REFERENCES link_groups(id)`, 'group_id do links'],
 ];
 
 migrations.forEach(([sql, name]) => {

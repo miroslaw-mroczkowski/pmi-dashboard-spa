@@ -28,22 +28,33 @@ router.patch('/users/:id/toggle', (req, res) => {
 // ── Links ────────────────────────────────────────────────────
 
 router.get('/links', (req, res) => {
-  const links = db.prepare('SELECT * FROM links ORDER BY type, display_order').all();
+  const links = db
+    .prepare(
+      `
+    SELECT l.*, lg.label as group_label, lg.page as group_page
+    FROM links l
+    LEFT JOIN link_groups lg ON lg.id = l.group_id
+    ORDER BY l.type, l.display_order
+  `,
+    )
+    .all();
   res.json(links);
 });
 
 router.post('/links', (req, res) => {
-  const { type, link_key, label, url, url_pattern, group_name, lu_id, is_primary, display_order } = req.body;
+  const { type, link_key, label, url, url_pattern, group_name, group_id, lu_id, is_primary, display_order } = req.body;
   if (!type || !link_key || !label) {
     return res.status(400).json({ error: 'Wymagane: type, link_key, label' });
   }
   const existing = db.prepare('SELECT id FROM links WHERE link_key = ?').get(link_key);
   if (existing) return res.status(400).json({ error: 'link_key już istnieje' });
 
+  const grp = group_id ? db.prepare('SELECT name FROM link_groups WHERE id = ?').get(group_id) : null;
+
   const result = db
     .prepare(
-      `INSERT INTO links (type, link_key, label, url, url_pattern, group_name, lu_id, is_primary, display_order)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO links (type, link_key, label, url, url_pattern, group_name, group_id, lu_id, is_primary, display_order)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .run(
       type,
@@ -51,7 +62,8 @@ router.post('/links', (req, res) => {
       label,
       url || '#',
       url_pattern || null,
-      group_name || null,
+      grp?.name || group_name || null,
+      group_id || null,
       lu_id || null,
       is_primary ? 1 : 0,
       display_order || 0,
@@ -61,9 +73,11 @@ router.post('/links', (req, res) => {
 });
 
 router.patch('/links/:id', (req, res) => {
-  const { label, url, url_pattern, group_name, lu_id, is_primary, display_order, active } = req.body;
+  const { label, url, url_pattern, group_name, group_id, lu_id, is_primary, display_order, active } = req.body;
   const link = db.prepare('SELECT id FROM links WHERE id = ?').get(req.params.id);
   if (!link) return res.status(404).json({ error: 'Nie znaleziono linku' });
+
+  const grp = group_id ? db.prepare('SELECT name FROM link_groups WHERE id = ?').get(group_id) : null;
 
   db.prepare(
     `UPDATE links SET
@@ -71,6 +85,7 @@ router.patch('/links/:id', (req, res) => {
        url = COALESCE(?, url),
        url_pattern = ?,
        group_name = ?,
+       group_id = ?,
        lu_id = ?,
        is_primary = COALESCE(?, is_primary),
        display_order = COALESCE(?, display_order),
@@ -80,7 +95,8 @@ router.patch('/links/:id', (req, res) => {
     label,
     url,
     url_pattern ?? null,
-    group_name ?? null,
+    grp?.name || group_name || null,
+    group_id || null,
     lu_id ?? null,
     is_primary != null ? (is_primary ? 1 : 0) : null,
     display_order,
@@ -187,6 +203,60 @@ router.patch('/users/:id', (req, res) => {
   `,
   ).run(first_name, last_name, brigade, lu_id || null, bu_id || null, role, req.params.id);
 
+  res.json({ success: true });
+});
+
+// ── Link Groups ──────────────────────────────────────────────
+
+// GET /api/admin/groups
+router.get('/groups', (req, res) => {
+  const groups = db.prepare('SELECT * FROM link_groups ORDER BY page, display_order').all();
+  res.json(groups);
+});
+
+// POST /api/admin/groups
+router.post('/groups', (req, res) => {
+  const { name, label, icon, page, display_order } = req.body;
+  if (!name || !label || !page) {
+    return res.status(400).json({ error: 'Wymagane: name, label, page' });
+  }
+  const existing = db.prepare('SELECT id FROM link_groups WHERE name = ?').get(name);
+  if (existing) return res.status(400).json({ error: 'Grupa już istnieje' });
+
+  const result = db
+    .prepare('INSERT INTO link_groups (name, label, icon, page, display_order) VALUES (?, ?, ?, ?, ?)')
+    .run(name, label, icon || 'layout-grid', page, display_order || 0);
+
+  res.status(201).json({ id: result.lastInsertRowid });
+});
+
+// PATCH /api/admin/groups/:id
+router.patch('/groups/:id', (req, res) => {
+  const { label, icon, page, display_order } = req.body;
+  const group = db.prepare('SELECT id FROM link_groups WHERE id = ?').get(req.params.id);
+  if (!group) return res.status(404).json({ error: 'Nie znaleziono grupy' });
+
+  db.prepare(
+    `
+    UPDATE link_groups SET
+      label = COALESCE(?, label),
+      icon = COALESCE(?, icon),
+      page = COALESCE(?, page),
+      display_order = COALESCE(?, display_order)
+    WHERE id = ?
+  `,
+  ).run(label, icon, page, display_order, req.params.id);
+
+  res.json({ success: true });
+});
+
+// DELETE /api/admin/groups/:id
+router.delete('/groups/:id', (req, res) => {
+  const group = db.prepare('SELECT id FROM link_groups WHERE id = ?').get(req.params.id);
+  if (!group) return res.status(404).json({ error: 'Nie znaleziono grupy' });
+  // Odłącz linki od tej grupy
+  db.prepare('UPDATE links SET group_id = NULL, group_name = NULL WHERE group_id = ?').run(req.params.id);
+  db.prepare('DELETE FROM link_groups WHERE id = ?').run(req.params.id);
   res.json({ success: true });
 });
 

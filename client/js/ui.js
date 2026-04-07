@@ -281,49 +281,30 @@ function renderSPA(myLU, myBU) {
   if (window.lucide) lucide.createIcons();
 }
 
-/* ── Narzędzia — karty per group_name ── */
-const GROUP_CONFIG = {
-  Produkcja: { row: 2, icon: 'factory', label: 'Produkcja' },
-  Codzienne: { row: 2, icon: 'check-square', label: 'Codzienne' },
-  Jakość: { row: 3, icon: 'shield-check', label: 'Jakość & BHP' },
-};
-
+/* ── Narzędzia — karty per group (z bazy) ── */
 function renderToolGroups() {
+  const groups = Data.getDashboardGroups();
   const tools = Data.getTools();
-  if (!tools.length) return;
-
-  const grouped = {};
-  const ungrouped = [];
-
-  tools.forEach((tool) => {
-    if (tool.group) {
-      if (!grouped[tool.group]) grouped[tool.group] = [];
-      grouped[tool.group].push(tool);
-    } else {
-      ungrouped.push(tool);
-    }
-  });
-
   const row2 = $('tools-row-2');
   const row3 = $('tools-row-3');
 
-  Object.entries(GROUP_CONFIG).forEach(([groupName, config]) => {
-    const items = grouped[groupName];
-    if (!items?.length) return;
-    const card = makeToolCard(groupName, config.label, config.icon, items);
-    if (config.row === 2 && row2) row2.appendChild(card);
-    else if (config.row === 3 && row3) row3.appendChild(card);
+  if (!row2 || !row3) return;
+
+  // Grupy z bazy
+  groups.forEach((group, idx) => {
+    const items = tools.filter((t) => t.group === group.name || t.group_id === group.id);
+    if (!items.length) return;
+    const card = makeToolCard(group.name, group.label, group.icon || 'layout-grid', items);
+    // Pierwsze dwie grupy w rzędzie 2, reszta w rzędzie 3
+    if (idx < 2) row2.appendChild(card);
+    else row3.appendChild(card);
   });
 
-  Object.entries(grouped).forEach(([groupName, items]) => {
-    if (GROUP_CONFIG[groupName]) return;
-    const card = makeToolCard(groupName, groupName, 'layout-grid', items);
-    if (row3) row3.appendChild(card);
-  });
-
+  // Narzędzia bez przypisanej grupy
+  const ungrouped = tools.filter((t) => !t.group && !t.group_id);
   if (ungrouped.length) {
     const card = makeToolCard('ungrouped', 'Inne', 'grid', ungrouped);
-    if (row3) row3.appendChild(card);
+    row3.appendChild(card);
   }
 
   if (window.lucide) lucide.createIcons();

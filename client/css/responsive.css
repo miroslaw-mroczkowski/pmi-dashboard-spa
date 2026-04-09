@@ -135,7 +135,8 @@
 /* ── 1920px — Full HD ── */
 @media (min-width: 1920px) {
   .app-wrap {
-    max-width: 1800px;
+    max-width: 1440px;
+    max-height: 1080px;
   }
   .spa-btn {
     width: 60px;
@@ -164,7 +165,8 @@
 /* ── 2560px — QHD / 34" ultrawide ── */
 @media (min-width: 2560px) {
   .app-wrap {
-    max-width: 2800px;
+    max-width: 1600px;
+    max-height: 1200px;
   }
   .sidebar {
     width: 300px;

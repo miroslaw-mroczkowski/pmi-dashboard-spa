@@ -512,7 +512,7 @@
   flex-direction: column;
   height: 100%;
   min-height: 0;
-  overflow: hidden;
+  /* BEZ overflow:hidden — pozwala content-area scrollować na małych ekranach */
 }
 
 .content-inner:has(.tools-row) .spa-row-wrap {
@@ -521,7 +521,8 @@
 
 .content-inner:has(.tools-row) .tools-row {
   flex: 1;
-  min-height: 0;
+  /* min-height oparty o zawartość — tools-row nie kurczy się poniżej naturalnej wysokości */
+  min-height: min-content;
 }
 
 @media (max-width: 768px) {
